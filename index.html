@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>5-Column Infinite Scrolling Grid with Glass Box</title>
+
+<!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Mulish:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --gap: 16px;
+  --col-width: 20%;
+  --column-height: 100vh;
+  --fade-height: 80px;
+  --background-color: #1D1D1D;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: 'Mulish', sans-serif;
+  overflow: hidden;
+  background: var(--background-color);
+}
+
+body {
+  position: relative;
+}
+
+/* Background grid */
+.grid-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  gap: var(--gap);
+  padding: var(--gap);
+  box-sizing: border-box;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.column {
+  width: var(--col-width);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  touch-action: pan-y;
+  border-radius: 12px;
+}
+
+.scroller {
+  overflow: hidden;
+  height: 100%;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  animation: scroll linear infinite;
+}
+
+.inner.reverse {
+  animation-name: scroll-reverse;
+}
+
+.item {
+  overflow: hidden;
+  margin-bottom: var(--gap);
+  flex-shrink: 0;
+  border-radius: 5px;
+}
+
+.item img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+  opacity: 0.4;
+}
+
+.column::before,
+.column::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: var(--fade-height);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.column::before {
+  top: 0;
+  background: linear-gradient(to bottom, var(--background-color), transparent);
+}
+
+.column::after {
+  bottom: 0;
+  background: linear-gradient(to top, var(--background-color), transparent);
+}
+
+@keyframes scroll {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
+}
+
+@keyframes scroll-reverse {
+  0% { transform: translateY(-50%); }
+  100% { transform: translateY(0); }
+}
+
+/* Centered frosted glass box */
+.glass-box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  max-width: 700px;
+  padding: 40px;
+  background: rgba(255,255,255,0.2);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  box-sizing: border-box;
+  z-index: 2;
+  text-align: center;
+  color: white;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+.glass-box h1 {
+    font-family: 'Montserrat', sans-serif; /* heading font */
+    font-weight: 700;
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+.glass-box p {
+    font-family: 'Mulish', sans-serif; /* body font */
+    font-weight: 400;
+    font-size: 1.2rem;
+}
+
+</style>
+</head>
+<body>
+
+<div class="grid-bg" id="grid"></div>
+
+<div class="glass-box">
+  <h1>MERCURY VN</h1>
+  <p>maybe mission statement or smt here?</p>
+</div>
+
+<script>
+const filenames = [
+"3E04BCCA-C6AB-45E5-A64C-D747B23CE468.JPG","32CA7B81-EFEC-49C4-A76F-5C616FCF638F.JPG","73B865BE-1723-4717-8D9A-11ED35DCC252.JPG","88D09621-9C12-486A-ABAC-36829CC01DB0.JPG","DSC01245.JPG","DSC01264.JPG","DSC01269.JPG","DSC01272.JPG","DSC01278.JPG","DSC01356.JPG","DSC01358.JPG","DSC01361.JPG","DSC01384.JPG","DSC01392.JPG","DSC01396.JPG","DSC01400.JPG","DSC01466.JPG","DSC01471.JPG","DSC01482.JPG","DSC01495.JPG","DSC01499.JPG","DSC01503.JPG","DSC01507.JPG","DSC02011.JPG","DSC02128.JPG","DSC02140.JPG","DSC02146.JPG","DSC02156.JPG","DSC02162.JPG","DSC02177.JPG","DSC02179.JPG","DSC02191.JPG","DSC02195.JPG","DSC02197.JPG","DSC02202.JPG","DSC02204.JPG","DSC02209.JPG","DSC02210.JPG","DSC02228.JPG","DSC02232.JPG","DSC02233.JPG","DSC02483.JPG","DSC02492.JPG","DSC02495.JPG","DSC02507.JPG","DSC02518.JPG","DSC02520.JPG","DSC02523.JPG","DSC02525.JPG","DSC02527.JPG","DSC02529.JPG","DSC02531.JPG","DSC02533.JPG","DSC02543(1).JPG","IMG_0158.JPG","IMG_0161.JPG","IMG_0165.JPG","IMG_0170.JPG","IMG_0177.JPG","IMG_0189.JPG","IMG_0197.JPG","IMG_0209.JPG","IMG_0213.JPG","IMG_0920.JPG","IMG_1073.JPG","IMG_1355.JPG","IMG_1356.JPG","IMG_1359 2.JPG","IMG_1359.JPG","IMG_1363.JPG","IMG_1394.JPG","IMG_1396.JPG","IMG_1408.JPG","IMG_1414.JPG","IMG_1417.JPG","IMG_1793.JPG","IMG_1794.JPG","IMG_1951.JPG","IMG_2191.JPG","IMG_2280.JPG","IMG_2286.JPG","IMG_2296.JPG","IMG_2301.JPG","IMG_2306.JPG","IMG_2339.JPG","IMG_2528.JPG","IMG_2550.JPG","IMG_2555.JPG","IMG_2583.JPG","IMG_2603.JPG","IMG_2768.JPG","IMG_2770.JPG","IMG_2775.JPG","IMG_2778.JPG","IMG_2781.JPG","IMG_2786.JPG","IMG_2798.JPG","IMG_3028.JPG","IMG_3039.JPG","IMG_3135.JPG","IMG_3272.JPG","IMG_3273.JPG","IMG_3297.JPG","IMG_3562.JPG","IMG_3563.JPG","IMG_3570.JPG","IMG_3890.JPG","IMG_3899.JPG","IMG_3901.JPG","IMG_3902.JPG","IMG_3903.JPG","IMG_4214.JPG","IMG_4974.JPG","IMG_5140.JPG","IMG_5155.JPG","IMG_7031.JPG"
+];
+
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+const shuffled = shuffleArray([...filenames]);
+const grid = document.getElementById('grid');
+const baseSpeeds = [60, 45, 75, 52.5, 65].map(s => s*3.5);
+
+const columns = [];
+for(let i=0;i<5;i++){
+  const column = document.createElement('div');
+  column.className='column';
+  const scroller = document.createElement('div');
+  scroller.className='scroller';
+  const inner = document.createElement('div');
+  inner.className='inner';
+  if(i===1 || i===3) inner.classList.add('reverse');
+  scroller.appendChild(inner);
+  column.appendChild(scroller);
+  grid.appendChild(column);
+  columns.push(inner);
+}
+
+// randomly assign images
+shuffled.forEach(name=>{
+  const colIndex = Math.floor(Math.random()*5);
+  const item = document.createElement('div');
+  item.className='item';
+  const img = document.createElement('img');
+  img.src = `imgs/${name}`;
+  item.appendChild(img);
+  columns[colIndex].appendChild(item);
+});
+
+// duplicate for smooth scrolling
+columns.forEach((inner, idx)=>{
+  inner.innerHTML += inner.innerHTML;
+  inner.style.animationDuration = `${baseSpeeds[idx]}s`;
+});
+</script>
+
+</body>
+</html>
